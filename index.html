@@ -1,486 +1,1090 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>자신있나 - 남자의 자신감을 깨우다</title>
-    <meta name="description" content="남성 활력, 자신감, 퍼포먼스를 위한 최고의 커뮤니티가 곧 시작됩니다." />
+    <title>자신있나 - 남자의 자신감</title>
     
-    <!-- Tailwind CSS -->
+    <!-- 1. Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              brand: {
-                dark: '#050505',
-                gray: '#1a1a1a',
-                accent: '#ff4d00', // Intense Orange
-                accentHover: '#cc3d00',
-                blue: '#00f2ff', // Cyber Blue
-              },
-            },
-            fontFamily: {
-              sans: ['Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'sans-serif'],
-            },
-            animation: {
-              'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'shine': 'shine 3s infinite',
-              'float': 'float 6s ease-in-out infinite',
-              'tilt': 'tilt 10s infinite linear',
-            },
-            keyframes: {
-              shine: {
-                '0%': { transform: 'translateX(-100%)' },
-                '100%': { transform: 'translateX(100%)' },
-              },
-              float: {
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-20px)' },
-              },
-              tilt: {
-                '0%, 50%, 100%': { transform: 'rotate(0deg)' },
-                '25%': { transform: 'rotate(1deg)' },
-                '75%': { transform: 'rotate(-1deg)' },
-              }
-            }
-          },
-        },
-      }
-    </script>
-
-    <!-- Pretendard Font -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     
-    <!-- Babel Standalone for in-browser JSX compilation -->
+    <!-- 2. Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- 3. React & ReactDOM (UMD) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- 4. Babel Standalone (JSX 실행용) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <style>
-      body {
-        font-family: 'Pretendard', sans-serif;
-        background-color: #050505;
-        color: #ffffff;
-        overflow-x: hidden;
-      }
-      ::-webkit-scrollbar { width: 8px; }
-      ::-webkit-scrollbar-track { background: #0f0f0f; }
-      ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-      ::-webkit-scrollbar-thumb:hover { background: #555; }
-      
-      .brand-gradient {
-        background: linear-gradient(135deg, #ff4d00 0%, #ff8800 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
+    <!-- 5. Lucide React Icons (UMD) -->
+    <script src="https://unpkg.com/lucide-react@0.344.0/dist/lucide-react.min.js"></script>
 
-      .bg-grid-pattern {
-        background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-        background-size: 40px 40px;
-      }
+    <style>
+      body { font-family: 'Noto Sans KR', sans-serif; }
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      /* Hide scrollbar for IE, Edge and Firefox */
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      
+      /* Animations */
+      @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+      .animate-fade-in { animation: fade-in 0.5s ease-out; }
+      
+      @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+      .animate-slide-up { animation: slide-up 0.3s ease-out; }
+      
+      @keyframes fade-in-down { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+      .animate-fade-in-down { animation: fade-in-down 0.3s ease-out; }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0"
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
 </head>
-  <body>
+<body class="bg-slate-50 text-slate-800 antialiased">
     <div id="root"></div>
 
-    <!-- Main Application Logic -->
-    <script type="text/babel" data-type="module">
-      import React, { useState, useEffect } from "https://esm.sh/react@18.2.0";
-      import { createRoot } from "https://esm.sh/react-dom@18.2.0/client";
-      import { 
-        ArrowDown, Flame, Lock, Zap, 
-        Shield, Activity, Users, BookOpen, BatteryCharging, Trophy,
-        Send, CheckCircle2, 
-        Instagram, Twitter, Mail,
-        Loader2
-      } from "https://esm.sh/lucide-react@0.292.0";
-
-      // --- Components ---
-
-      // Hero Section
-      const HeroSection = () => {
-        const TYPING_PHRASES = [
-          "잃어버린 자신감을 되찾다",
-          "지치지 않는 에너지를 위해",
-          "폭발적인 퍼포먼스를 경험하라",
-          "남자를 완성하는 단 하나의 공간"
-        ];
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
         
-        const [text, setText] = useState('');
-        const [phraseIndex, setPhraseIndex] = useState(0);
-        const [isDeleting, setIsDeleting] = useState(false);
-        const [delta, setDelta] = useState(100);
+        // 아이콘 추출
+        const { 
+            Menu, X, ShieldCheck, User, Search, Home, FileText, Tag, 
+            CheckCircle2, Star, ChevronRight, Lock, TrendingUp, Users, 
+            ArrowRight, Shield, MapPin, Clock, Filter, MessageSquare, 
+            ThumbsUp, Eye, PenLine, AlertCircle, ChevronDown, Gift, ArrowLeft
+        } = lucideReact;
 
-        useEffect(() => {
-          let ticker = setInterval(() => {
-            tick();
-          }, delta);
-
-          return () => clearInterval(ticker);
-        }, [text, delta]);
-
-        const tick = () => {
-          let i = phraseIndex % TYPING_PHRASES.length;
-          let fullText = TYPING_PHRASES[i];
-          let updatedText = isDeleting 
-            ? fullText.substring(0, text.length - 1) 
-            : fullText.substring(0, text.length + 1);
-
-          setText(updatedText);
-
-          if (isDeleting) {
-            setDelta(50);
-          }
-
-          if (!isDeleting && updatedText === fullText) {
-            setIsDeleting(true);
-            setDelta(2000); 
-          } else if (isDeleting && updatedText === '') {
-            setIsDeleting(false);
-            setPhraseIndex(phraseIndex + 1);
-            setDelta(100);
-          } else if (!isDeleting && updatedText !== fullText) {
-              setDelta(Math.random() * 50 + 50);
-          }
+        // --- 1. CONSTANTS & DATA ---
+        
+        const ViewState = {
+            HOME: 'HOME',
+            HOSPITALS: 'HOSPITALS',
+            COMMUNITY: 'COMMUNITY',
+            DEALS: 'DEALS',
+            LOGIN: 'LOGIN'
         };
 
-        return (
-          <section className="relative min-h-screen flex flex-col justify-center items-center pt-20 px-6 text-center z-10">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-accent/30 bg-brand-accent/10 mb-8 animate-float">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-accent"></span>
-              </span>
-              <span className="text-xs font-semibold text-brand-accent tracking-wider uppercase">Coming Soon</span>
-            </div>
+        const COMPANY_INFO = {
+            name: "주식회사 컨피던스랩",
+            ceo: "박상수",
+            registrationNumber: "349-81-03430",
+            address: "경기도 용인시 수지구 대지로 36, 3층 302-J10호(죽전동, 신흥빌딩)",
+            email: "contact@confidencelab.kr"
+        };
 
-            {/* Main Title */}
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6 leading-[1.1]">
-              오늘 밤, 당신은 <br className="md:hidden" />
-              <span className="brand-gradient block md:inline">달라집니다.</span>
-            </h1>
+        const CATEGORIES = ['전체', '남성확대', '조루/발기부전', '포경/정관', '전립선/성병', '여유증'];
 
-            {/* Typewriter Subtitle */}
-            <div className="h-12 md:h-16 mb-8 flex items-center justify-center">
-              <p className="text-xl md:text-3xl text-gray-400 font-light font-mono">
-                {text}
-                <span className="animate-pulse ml-1 text-brand-accent">|</span>
-              </p>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 md:gap-16 border-t border-b border-white/10 py-8 mb-12">
-              <div className="flex flex-col items-center">
-                  <span className="text-2xl md:text-3xl font-bold text-white">100%</span>
-                  <span className="text-xs md:text-sm text-gray-500 uppercase tracking-widest mt-2">비밀 보장</span>
-              </div>
-              <div className="flex flex-col items-center">
-                  <span className="text-2xl md:text-3xl font-bold text-white">Top 1%</span>
-                  <span className="text-xs md:text-sm text-gray-500 uppercase tracking-widest mt-2">프리미엄 정보</span>
-              </div>
-              <div className="flex flex-col items-center">
-                  <span className="text-2xl md:text-3xl font-bold text-white">3,240+</span>
-                  <span className="text-xs md:text-sm text-gray-500 uppercase tracking-widest mt-2">사전 예약자</span>
-              </div>
-            </div>
-
-            {/* CTA Button */}
-            <button 
-              onClick={() => document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' })}
-              className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-brand-accent font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent focus:ring-offset-gray-900"
-            >
-              <div className="absolute -inset-3 transition-all duration-1000 opacity-30 group-hover:opacity-100 group-hover:duration-200 animate-tilt">
-                  <div className="w-full h-full bg-gradient-to-r from-brand-accent to-purple-600 rounded-xl blur-lg filter opacity-70"></div>
-              </div>
-              <span className="relative flex items-center gap-2">
-                  무료 사전 예약하기
-                  <Zap className="w-5 h-5 group-hover:text-yellow-300 transition-colors" />
-              </span>
-            </button>
-
-            {/* Scroll Indicator */}
-            <div className="absolute bottom-10 animate-bounce text-gray-500">
-              <ArrowDown className="w-6 h-6" />
-            </div>
-          </section>
-        );
-      };
-
-      // Features Section
-      const FeaturesSection = () => {
-        const features = [
-          {
-            icon: <BatteryCharging className="w-8 h-8 text-brand-accent" />,
-            title: "압도적인 활력 증진",
-            description: "과학적으로 검증된 루틴과 식단, 보충제 가이드를 통해 지치지 않는 에너지를 만드세요."
-          },
-          {
-            icon: <Shield className="w-8 h-8 text-blue-400" />,
-            title: "철저한 익명 보장",
-            description: "모든 활동은 철저히 익명으로 이루어집니다. 100% 프라이빗한 공간에서 자유롭게 소통하세요."
-          },
-          {
-            icon: <Trophy className="w-8 h-8 text-yellow-500" />,
-            title: "실전 퍼포먼스 향상",
-            description: "침실에서의 자신감을 되찾아줄 실전 테크닉과 마인드셋 트레이닝을 제공합니다."
-          },
-          {
-            icon: <Users className="w-8 h-8 text-green-400" />,
-            title: "검증된 커뮤니티",
-            description: "같은 고민을 가진 남성들과 서로의 노하우를 공유하고 성장하는 프리미엄 네트워크."
-          },
-          {
-            icon: <BookOpen className="w-8 h-8 text-purple-400" />,
-            title: "전문가 칼럼 & 리포트",
-            description: "비뇨기과 전문의, 헬스 트레이너 등 전문가들이 제공하는 믿을 수 있는 최신 정보.",
-          },
-          {
-            icon: <Activity className="w-8 h-8 text-red-500" />,
-            title: "자가 진단 시스템",
-            description: "현재 당신의 상태를 정확하게 파악하고 맞춤형 솔루션을 제안받을 수 있습니다."
-          }
+        const MOCK_HOSPITALS = [
+            {
+                id: 'h1',
+                name: '맨파워 비뇨기과 강남점',
+                location: '서울 강남구',
+                rating: 4.8,
+                reviewCount: 1240,
+                categories: ['남성확대', '조루/발기부전'],
+                isPremium: true,
+                imageUrl: 'https://picsum.photos/400/300?random=1',
+                openTime: '09:00 - 19:00',
+                description: '대학병원 교수 출신 의료진, 1:1 프라이빗 대기실 완비.'
+            },
+            {
+                id: 'h2',
+                name: '자이언트 남성의원',
+                location: '서울 서초구',
+                rating: 4.6,
+                reviewCount: 850,
+                categories: ['남성확대', '여유증'],
+                isPremium: true,
+                imageUrl: 'https://picsum.photos/400/300?random=2',
+                openTime: '10:00 - 20:00',
+                description: '3D 입체 분석을 통한 맞춤형 수술 설계.'
+            },
+            {
+                id: 'h3',
+                name: '굿닥터 전립선 센터',
+                location: '경기 분당구',
+                rating: 4.9,
+                reviewCount: 520,
+                categories: ['전립선/성병', '포경/정관'],
+                isPremium: false,
+                imageUrl: 'https://picsum.photos/400/300?random=3',
+                openTime: '09:00 - 18:00',
+                description: '통증 적은 무도 정관수술 전문.'
+            },
+            {
+                id: 'h4',
+                name: '하이맨 비뇨의학과',
+                location: '부산 해운대구',
+                rating: 4.5,
+                reviewCount: 320,
+                categories: ['조루/발기부전', '남성확대'],
+                isPremium: false,
+                imageUrl: 'https://picsum.photos/400/300?random=4',
+                openTime: '09:30 - 19:30',
+                description: '최신 체외충격파 장비 보유, 비수술 치료 우선.'
+            },
+            {
+                id: 'h5',
+                name: '스탠다드 비뇨기과',
+                location: '서울 마포구',
+                rating: 4.7,
+                reviewCount: 150,
+                categories: ['포경/정관', '전립선/성병'],
+                isPremium: true,
+                imageUrl: 'https://picsum.photos/400/300?random=5',
+                openTime: '09:00 - 21:00 (야간진료)',
+                description: '직장인을 위한 평일 야간 진료 시행 중.'
+            }
         ];
 
-        return (
-          <section className="py-24 bg-brand-gray relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-5xl font-bold mb-6">
-                  왜 <span className="text-brand-accent">'자신있나'</span>여야 할까요?
-                </h2>
-                <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-                  단순한 정보 공유를 넘어, 실질적인 변화를 만들어내는 남성 토탈 케어 플랫폼입니다.
-                </p>
-              </div>
+        const MOCK_REVIEWS = [
+            {
+                id: 'r1',
+                userId: 'user123',
+                hospitalId: 'h1',
+                hospitalName: '맨파워 비뇨기과 강남점',
+                treatment: '진피 확대술',
+                rating: 5,
+                content: '수술 전 고민이 많았는데 원장님이 정말 친절하게 상담해주셨습니다. 회복 기간도 생각보다 짧았고 결과도 만족스럽네요. 자신감이 생겼습니다.',
+                date: '2023.10.25',
+                isVerified: true,
+                likeCount: 45
+            },
+            {
+                id: 'r2',
+                userId: 'confidenceUp',
+                hospitalId: 'h2',
+                hospitalName: '자이언트 남성의원',
+                treatment: '여유증 수술',
+                rating: 4,
+                content: '여름에 티셔츠 한 장 입기 꺼려졌는데 이제 당당하게 입습니다. 멍은 좀 들었지만 2주 지나니 괜찮아졌어요.',
+                date: '2023.10.20',
+                isVerified: true,
+                likeCount: 23
+            },
+            {
+                id: 'r3',
+                userId: 'newMan',
+                hospitalId: 'h1',
+                hospitalName: '맨파워 비뇨기과 강남점',
+                treatment: '조루 수술',
+                rating: 5,
+                content: '확실히 시간이 늘어났습니다. 파트너도 만족해하니 진작 할 걸 그랬다는 생각이 듭니다.',
+                date: '2023.10.15',
+                isVerified: true,
+                likeCount: 88
+            }
+        ];
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {features.map((feature, idx) => (
-                  <div 
-                    key={idx} 
-                    className="group relative p-8 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    <div className="relative z-10">
-                      <div className="mb-4 bg-black/30 w-14 h-14 rounded-lg flex items-center justify-center border border-white/10 group-hover:border-brand-accent/30 transition-colors">
-                        {feature.icon}
-                      </div>
-                      <h3 className="text-xl font-bold text-white mb-3 group-hover:text-brand-accent transition-colors">
-                        {feature.title}
-                      </h3>
-                      <p className="text-gray-400 leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        );
-      };
+        const MOCK_POSTS_INITIAL = [
+            {
+                id: 'p1',
+                type: 'REVIEW',
+                title: '강남 쪽 3군데 상담 다녀온 솔직 후기 (비용 공개)',
+                author: '발품왕',
+                content: 'A병원, B병원, C병원 다녀왔는데 가격 차이가 꽤 나네요. 상세 내용은...',
+                date: '1시간 전',
+                views: 1204,
+                comments: 32,
+                isVerifiedUser: true
+            },
+            {
+                id: 'p2',
+                type: 'QNA',
+                title: '수술 후 3일차인데 붓기가 이정도면 정상인가요?',
+                author: '걱정인형',
+                content: '사진 첨부합니다. 너무 부은 것 같은데 병원 가봐야 할까요?',
+                date: '3시간 전',
+                views: 450,
+                comments: 12,
+                isVerifiedUser: false
+            },
+            {
+                id: 'p3',
+                type: 'FREE',
+                title: '나이가 드니 전립선 건강이 걱정되네요 영양제 추천좀',
+                author: '건강제일',
+                content: '쏘팔메토 말고 효과 보신 거 있으신가요?',
+                date: '5시간 전',
+                views: 210,
+                comments: 8,
+                isVerifiedUser: true
+            }
+        ];
 
-      // Waitlist Section
-      const WaitlistSection = () => {
-        const [email, setEmail] = useState('');
-        const [status, setStatus] = useState('idle');
+        const MOCK_DEALS = [
+            {
+                id: 'd1',
+                hospitalName: '맨파워 비뇨기과',
+                title: '프리미엄 복합 확대술 (진피+필러) 선착순 특가',
+                originalPrice: 3500000,
+                discountPrice: 2490000,
+                discountRate: 29,
+                endDate: '2023-11-30',
+                limitCount: 5,
+                tags: ['확대', 'BEST']
+            },
+            {
+                id: 'd2',
+                hospitalName: '자이언트 남성의원',
+                title: '무도 정관수술 + 통증케어 패키지',
+                originalPrice: 300000,
+                discountPrice: 150000,
+                discountRate: 50,
+                endDate: '2023-11-15',
+                tags: ['정관', '통증케어']
+            },
+            {
+                id: 'd3',
+                hospitalName: '굿닥터 전립선 센터',
+                title: '전립선 종합 정밀검진 (초음파 포함)',
+                originalPrice: 150000,
+                discountPrice: 89000,
+                discountRate: 40,
+                endDate: '2023-11-20',
+                tags: ['검진', '효도선물']
+            }
+        ];
 
-        const handleSubmit = (e) => {
-          e.preventDefault();
-          if (!email) return;
+        // --- 2. COMPONENTS ---
 
-          setStatus('loading');
-          
-          setTimeout(() => {
-            setStatus('success');
-            setEmail('');
-          }, 1500);
+        // Layout Component
+        const Layout = ({ children, currentView, setView }) => {
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+            const [scrolled, setScrolled] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    setScrolled(window.scrollY > 20);
+                };
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const navItems = [
+                { label: '병원찾기', view: ViewState.HOSPITALS, icon: <Search size={20} /> },
+                { label: '커뮤니티', view: ViewState.COMMUNITY, icon: <FileText size={20} /> },
+                { label: '매일특가', view: ViewState.DEALS, icon: <Tag size={20} /> },
+            ];
+
+            const handleNavClick = (view) => {
+                setView(view);
+                setIsMobileMenuOpen(false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col font-sans bg-slate-50 text-slate-800">
+                    {/* Header */}
+                    <header 
+                        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+                            scrolled ? 'bg-white/80 backdrop-blur-md shadow-sm border-b border-slate-100/50' : 'bg-transparent'
+                        }`}
+                    >
+                        <div className="max-w-4xl mx-auto px-5 h-16 flex items-center justify-between">
+                            <div 
+                                className="flex items-center gap-2 cursor-pointer group" 
+                                onClick={() => handleNavClick(ViewState.HOME)}
+                            >
+                                <div className="bg-blue-600 text-white p-1.5 rounded-lg group-hover:scale-110 transition-transform">
+                                    <ShieldCheck className="w-6 h-6" />
+                                </div>
+                                <span className={`text-xl font-black tracking-tighter ${scrolled || currentView !== ViewState.HOME ? 'text-slate-900' : 'text-slate-900 md:text-slate-900'} transition-colors`}>
+                                    자신있나
+                                </span>
+                            </div>
+
+                            <nav className="hidden md:flex gap-1 items-center font-medium">
+                                {navItems.map((item) => (
+                                    <button
+                                        key={item.label}
+                                        onClick={() => handleNavClick(item.view)}
+                                        className={`px-4 py-2 rounded-full transition-all text-sm ${
+                                            currentView === item.view 
+                                                ? 'bg-blue-50 text-blue-700 font-bold' 
+                                                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                                        }`}
+                                    >
+                                        {item.label}
+                                    </button>
+                                ))}
+                                <div className="w-px h-4 bg-slate-200 mx-2"></div>
+                                <button 
+                                    onClick={() => handleNavClick(ViewState.LOGIN)}
+                                    className="px-5 py-2.5 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+                                >
+                                    로그인
+                                </button>
+                            </nav>
+
+                            <button 
+                                className="md:hidden p-2 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            >
+                                {isMobileMenuOpen ? <X /> : <Menu />}
+                            </button>
+                        </div>
+                    </header>
+
+                    {/* Mobile Menu */}
+                    {isMobileMenuOpen && (
+                        <div className="fixed inset-0 z-40 bg-white md:hidden pt-20 px-6 animate-fade-in-down">
+                            <div className="flex flex-col space-y-2">
+                                <button
+                                    onClick={() => handleNavClick(ViewState.HOME)}
+                                    className={`flex items-center gap-4 p-4 rounded-2xl text-lg font-bold transition-colors ${
+                                        currentView === ViewState.HOME ? 'bg-blue-50 text-blue-600' : 'text-slate-600 active:bg-slate-50'
+                                    }`}
+                                >
+                                    <div className="bg-white p-2 rounded-xl shadow-sm"><Home size={20}/></div>
+                                    홈
+                                </button>
+                                {navItems.map((item) => (
+                                    <button
+                                        key={item.label}
+                                        onClick={() => handleNavClick(item.view)}
+                                        className={`flex items-center gap-4 p-4 rounded-2xl text-lg font-bold transition-colors ${
+                                            currentView === item.view ? 'bg-blue-50 text-blue-600' : 'text-slate-600 active:bg-slate-50'
+                                        }`}
+                                    >
+                                        <div className="bg-white p-2 rounded-xl shadow-sm">{item.icon}</div>
+                                        {item.label}
+                                    </button>
+                                ))}
+                                <div className="h-px bg-slate-100 my-4"></div>
+                                <button 
+                                    onClick={() => handleNavClick(ViewState.LOGIN)}
+                                    className="flex items-center justify-center gap-2 w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-lg shadow-slate-200"
+                                >
+                                    <User size={20} />
+                                    로그인 / 회원가입
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <main className="flex-grow w-full max-w-4xl mx-auto bg-white min-h-screen shadow-2xl shadow-slate-200/50 md:border-x md:border-slate-50/50 pt-16">
+                        {children}
+                    </main>
+
+                    <footer className="bg-slate-900 text-slate-400 py-12 px-6 text-sm">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-8">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-4 text-white">
+                                        <ShieldCheck className="w-6 h-6 text-blue-500" />
+                                        <span className="text-xl font-bold">자신있나</span>
+                                    </div>
+                                    <p className="text-slate-500 max-w-sm leading-relaxed">
+                                        대한민국 남성들을 위한 No.1 헬스케어 플랫폼.<br/>
+                                        검증된 정보와 솔직한 후기로 당신의 자신감을 응원합니다.
+                                    </p>
+                                </div>
+                                <div className="flex gap-4">
+                                   <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 transition-colors text-white cursor-pointer">B</div>
+                                   <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 transition-colors text-white cursor-pointer">I</div>
+                                   <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 transition-colors text-white cursor-pointer">F</div>
+                                </div>
+                            </div>
+                            
+                            <div className="border-t border-slate-800 pt-8 space-y-2 text-xs text-slate-500">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                   <p>대표자: {COMPANY_INFO.ceo} | 사업자등록번호: {COMPANY_INFO.registrationNumber}</p>
+                                   <p>주소: {COMPANY_INFO.address}</p>
+                                   <p>이메일: {COMPANY_INFO.email}</p>
+                                </div>
+                                <p className="mt-4 pt-4 border-t border-slate-800/50">
+                                  * 본 서비스는 정보 중개 플랫폼으로 의료 상담 및 수술에 대한 법적 책임은 각 병원에 있습니다. 
+                                  허위 후기 및 불법 의료 광고는 24시간 모니터링을 통해 강력히 제재합니다.
+                                </p>
+                                <p className="font-medium text-slate-400 pt-2">© Confidence Lab. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
         };
 
-        return (
-          <section id="waitlist" className="py-32 relative flex items-center justify-center">
-              {/* Background Gradients */}
-            <div className="absolute inset-0 bg-brand-dark">
-               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-accent/10 via-transparent to-transparent opacity-50" />
-            </div>
+        // Home Page
+        const Home = ({ setView }) => {
+            return (
+                <div className="flex flex-col animate-fade-in">
+                    <section className="relative bg-[#0B1120] text-white pt-12 pb-20 px-6 overflow-hidden rounded-b-[3rem]">
+                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3"></div>
+                        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-teal-500/10 rounded-full blur-[80px] translate-y-1/3 -translate-x-1/4"></div>
+                        
+                        <div className="relative z-10 max-w-2xl mx-auto text-center md:text-left">
+                            <div className="inline-flex items-center gap-2 bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm px-4 py-1.5 rounded-full text-blue-300 text-xs font-semibold mb-6 shadow-lg">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                </span>
+                                실시간 영수증 인증 후기 12,403건 돌파
+                            </div>
+                            
+                            <h1 className="text-4xl md:text-6xl font-black leading-[1.15] mb-6 tracking-tight">
+                                남자의 자신감,<br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400">데이터</span>로 증명하다
+                            </h1>
+                            
+                            <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-lg mx-auto md:mx-0">
+                                광고성 글에 더 이상 속지 마세요.<br className="md:hidden"/> 
+                                엄격한 영수증 인증 시스템으로 검증된<br className="md:hidden"/> 
+                                <span className="text-slate-200 font-bold">진짜 남자들의 이야기</span>만 모았습니다.
+                            </p>
+                            
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                                <button onClick={() => setView(ViewState.HOSPITALS)} className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-2xl shadow-lg shadow-blue-900/50 transition-all transform active:scale-95 flex items-center justify-center gap-2 text-lg">
+                                    내 주변 병원 찾기 <ArrowRight size={20}/>
+                                </button>
+                                <button onClick={() => setView(ViewState.COMMUNITY)} className="bg-slate-800/80 hover:bg-slate-700 text-white font-semibold py-4 px-8 rounded-2xl border border-slate-700/50 backdrop-blur-md transition-all active:scale-95 text-center">
+                                    리얼 후기 둘러보기
+                                </button>
+                            </div>
+                        </div>
+                    </section>
 
-            <div className="relative z-10 w-full max-w-4xl px-6 text-center">
-              <h2 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-                지금 신청하고 <br />
-                <span className="text-brand-accent">VIP 혜택</span>을 선점하세요
-              </h2>
-              
-              <p className="text-gray-400 mb-10 text-lg md:text-xl max-w-2xl mx-auto">
-                오픈 전 사전 예약하신 분들께만 평생 무료 멤버십과 <br className="hidden md:block" />
-                <span className="text-white font-bold">'상위 1% 남성 활력 가이드북'</span> PDF를 드립니다.
-              </p>
+                    <div className="px-6 -mt-10 relative z-20">
+                        <div className="bg-white rounded-3xl p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-wrap justify-around items-center gap-4 text-center">
+                            <div className="flex-1 min-w-[100px]">
+                                <p className="text-3xl font-black text-slate-900 mb-1">98<span className="text-xl text-blue-600">%</span></p>
+                                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">후기 신뢰도</p>
+                            </div>
+                            <div className="w-px h-12 bg-slate-100 hidden sm:block"></div>
+                            <div className="flex-1 min-w-[100px]">
+                                <p className="text-3xl font-black text-slate-900 mb-1">542<span className="text-xl text-blue-600">+</span></p>
+                                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">제휴 병원</p>
+                            </div>
+                            <div className="w-px h-12 bg-slate-100 hidden sm:block"></div>
+                            <div className="flex-1 min-w-[100px]">
+                                <p className="text-3xl font-black text-slate-900 mb-1">0<span className="text-xl text-blue-600">건</span></p>
+                                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">허위 광고</p>
+                            </div>
+                        </div>
+                    </div>
 
-              {status === 'success' ? (
-                <div className="animate-in fade-in zoom-in duration-500 p-8 bg-green-500/10 border border-green-500/20 rounded-2xl inline-flex flex-col items-center">
-                  <CheckCircle2 className="w-16 h-16 text-green-500 mb-4" />
-                  <h3 className="text-2xl font-bold text-white mb-2">신청이 완료되었습니다!</h3>
-                  <p className="text-gray-400">오픈 시 가장 먼저 알려드리겠습니다.</p>
-                  <button 
-                    onClick={() => setStatus('idle')}
-                    className="mt-6 text-sm text-green-500 hover:text-green-400 underline"
-                  >
-                    다른 이메일로 또 신청하기
-                  </button>
+                    <section className="py-12 px-6">
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <span className="text-blue-600 font-bold text-sm tracking-wider uppercase mb-1 block">Daily Special</span>
+                                <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
+                                    오늘의 특가 <TrendingUp className="text-red-500 fill-red-500" size={24} />
+                                </h2>
+                            </div>
+                            <button onClick={() => setView(ViewState.DEALS)} className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-colors">
+                                <ChevronRight size={20} />
+                            </button>
+                        </div>
+                        
+                        <div className="space-y-4">
+                            {MOCK_DEALS.slice(0, 2).map((deal) => (
+                                <div key={deal.id} className="group bg-white rounded-3xl p-1 shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-100 transition-all duration-300 cursor-pointer overflow-hidden" onClick={() => setView(ViewState.DEALS)}>
+                                    <div className="relative p-6 bg-gradient-to-br from-white to-slate-50/50 rounded-[1.3rem]">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <span className="text-xs font-bold text-blue-700 bg-blue-100/50 px-3 py-1.5 rounded-full backdrop-blur-sm">{deal.hospitalName}</span>
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-[10px] font-bold text-red-500 uppercase tracking-wide mb-0.5">Time Left</span>
+                                                <span className="text-xs text-white font-bold bg-red-500 px-2 py-0.5 rounded-md shadow-sm shadow-red-200">
+                                                    D-{Math.ceil((new Date(deal.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <h3 className="font-bold text-slate-900 text-lg mb-4 line-clamp-2 group-hover:text-blue-700 transition-colors">{deal.title}</h3>
+                                        <div className="flex items-end justify-between">
+                                            <div>
+                                                <span className="text-slate-400 text-sm line-through block mb-0.5">{deal.originalPrice.toLocaleString()}원</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-2xl font-black text-slate-900">{deal.discountPrice.toLocaleString()}</span>
+                                                    <span className="text-lg font-bold text-slate-900">원</span>
+                                                </div>
+                                            </div>
+                                            <div className="text-3xl font-black text-red-500 tracking-tighter -mb-1">{deal.discountRate}%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section className="py-12 px-6 bg-slate-50 border-t border-slate-100">
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <span className="text-teal-600 font-bold text-sm tracking-wider uppercase mb-1 block">Real Reviews</span>
+                                <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
+                                    실시간 인증 후기 <Shield className="text-teal-500 fill-teal-500" size={24} />
+                                </h2>
+                            </div>
+                            <button onClick={() => setView(ViewState.COMMUNITY)} className="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">전체보기</button>
+                        </div>
+
+                        <div className="grid gap-4">
+                            {MOCK_REVIEWS.slice(0, 3).map((review) => (
+                                <div key={review.id} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                                                <Users size={14} className="text-slate-500" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-900">{review.userId}</p>
+                                                <p className="text-[10px] text-slate-400">{review.hospitalName}</p>
+                                            </div>
+                                        </div>
+                                        {review.isVerified && (
+                                            <span className="flex items-center gap-1 text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-1 rounded-full border border-teal-100">
+                                                <CheckCircle2 size={10} /> 영수증인증
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-1 mb-3">
+                                        <div className="flex text-yellow-400">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star key={i} size={14} fill={i < review.rating ? "currentColor" : "none"} className={i < review.rating ? "" : "text-slate-200"} />
+                                            ))}
+                                        </div>
+                                        <span className="text-xs font-medium text-slate-400 ml-2">{review.treatment}</span>
+                                    </div>
+                                    <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed mb-4">"{review.content}"</p>
+                                    <div className="pt-3 border-t border-slate-50 flex justify-between items-center text-xs text-slate-400">
+                                        <span>{review.date}</span>
+                                        <span className="flex items-center gap-1"><Users size={12}/> {review.likeCount}명에게 도움됨</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section className="px-6 py-12">
+                        <div className="relative bg-slate-900 rounded-[2.5rem] p-8 md:p-12 text-center text-white shadow-2xl overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
+                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/20 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
+                            
+                            <div className="relative z-10">
+                                <h3 className="text-2xl md:text-3xl font-black mb-4 leading-tight">
+                                    아직도 고민만 하고 계신가요?
+                                </h3>
+                                <p className="text-slate-400 text-sm md:text-base mb-8 max-w-sm mx-auto">
+                                    12,000명의 선배들이 남긴 생생한 후기가<br/>
+                                    당신의 선택을 도와드립니다.
+                                </p>
+                                <button onClick={() => setView(ViewState.LOGIN)} className="w-full md:w-auto md:px-12 bg-white text-slate-900 hover:bg-blue-50 font-bold py-4 rounded-xl transition-colors shadow-lg shadow-white/10">
+                                    1분 만에 가입하고 정보 확인하기
+                                </button>
+                            </div>
+                        </div>
+                    </section>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4 max-w-xl mx-auto">
-                  <input
-                    type="email"
-                    placeholder="이메일 주소를 입력하세요"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={status === 'loading'}
-                    className="flex-1 px-6 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-brand-accent focus:ring-1 focus:ring-brand-accent transition-all disabled:opacity-50"
-                  />
-                  <button
-                    type="submit"
-                    disabled={status === 'loading'}
-                    className="px-8 py-4 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold transition-all transform hover:scale-105 disabled:opacity-70 disabled:hover:scale-100 flex items-center justify-center gap-2 min-w-[160px]"
-                  >
-                    {status === 'loading' ? (
-                      <>
-                          <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          처리중...
-                      </>
-                    ) : (
-                      <>
-                        알림 신청
-                        <Send className="w-4 h-4" />
-                      </>
+            );
+        };
+
+        // Hospitals Page
+        const Hospitals = () => {
+            const [selectedCategory, setSelectedCategory] = useState('전체');
+            const [searchTerm, setSearchTerm] = useState('');
+            const [sortBy, setSortBy] = useState('rating');
+
+            const filteredHospitals = useMemo(() => {
+                let result = MOCK_HOSPITALS;
+
+                if (selectedCategory !== '전체') {
+                    result = result.filter(h => h.categories.includes(selectedCategory));
+                }
+
+                if (searchTerm) {
+                    result = result.filter(h => 
+                        h.name.includes(searchTerm) || 
+                        h.location.includes(searchTerm) || 
+                        h.description.includes(searchTerm)
+                    );
+                }
+
+                result = [...result].sort((a, b) => {
+                    if (sortBy === 'rating') return b.rating - a.rating;
+                    return b.reviewCount - a.reviewCount;
+                });
+
+                return result;
+            }, [selectedCategory, searchTerm, sortBy]);
+
+            return (
+                <div className="pb-20 min-h-screen bg-white">
+                    <div className="sticky top-16 bg-white z-40 px-5 pt-4 pb-2 border-b border-slate-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
+                        <h1 className="text-2xl font-black text-slate-900 mb-4">병원 찾기</h1>
+                        <div className="relative mb-6">
+                            <input
+                                type="text"
+                                placeholder="병원명, 지역, 시술명으로 검색해보세요"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full bg-slate-50 text-slate-800 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white border border-transparent focus:border-blue-500 transition-all shadow-inner"
+                            />
+                            <Search className="absolute left-4 top-4 text-slate-400" size={20} />
+                        </div>
+
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-3">
+                            {CATEGORIES.map((cat) => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setSelectedCategory(cat)}
+                                    className={`whitespace-nowrap px-4 py-2 rounded-xl text-sm font-bold transition-all transform active:scale-95 ${
+                                        selectedCategory === cat
+                                            ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/30'
+                                            : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                                    }`}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="px-5 py-4 flex justify-between items-center text-sm bg-slate-50/50">
+                        <span className="font-bold text-slate-800">검색 결과 <span className="text-blue-600">{filteredHospitals.length}</span>건</span>
+                        <div className="flex gap-1 bg-white p-1 rounded-lg border border-slate-200">
+                            <button onClick={() => setSortBy('rating')} className={`px-3 py-1 rounded-md transition-colors text-xs font-bold ${sortBy === 'rating' ? 'bg-slate-100 text-slate-900' : 'text-slate-400'}`}>
+                                평점순
+                            </button>
+                            <button onClick={() => setSortBy('review')} className={`px-3 py-1 rounded-md transition-colors text-xs font-bold ${sortBy === 'review' ? 'bg-slate-100 text-slate-900' : 'text-slate-400'}`}>
+                                후기순
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="px-5 py-4 space-y-6">
+                        {filteredHospitals.map((hospital) => (
+                            <div key={hospital.id} className="group bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer">
+                                <div className="relative aspect-[16/9] bg-slate-200 overflow-hidden">
+                                    <img src={hospital.imageUrl} alt={hospital.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                                    
+                                    {hospital.isPremium && (
+                                        <div className="absolute top-4 left-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-lg uppercase tracking-wider">
+                                            Premium
+                                        </div>
+                                    )}
+                                    
+                                    <div className="absolute bottom-4 left-4 text-white">
+                                        <h3 className="text-xl font-bold mb-1 shadow-black/10 drop-shadow-md">{hospital.name}</h3>
+                                        <div className="flex items-center gap-1 text-sm font-medium text-slate-200">
+                                            <MapPin size={14} />
+                                            <span>{hospital.location}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-lg">
+                                        <Star size={14} className="text-yellow-400 fill-yellow-400" />
+                                        <span className="font-black text-slate-900 text-sm">{hospital.rating}</span>
+                                        <span className="text-slate-400 text-xs font-medium">({hospital.reviewCount})</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="p-5">
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        {hospital.categories.map((cat, idx) => (
+                                            <span key={idx} className="bg-slate-50 text-slate-600 text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-100">
+                                                {cat}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-1 min-w-[16px]"><Clock size={16} className="text-slate-400" /></div>
+                                        <div>
+                                            <p className="text-sm font-medium text-slate-800 mb-2">{hospital.openTime}</p>
+                                            <p className="text-sm text-slate-500 leading-relaxed">
+                                                {hospital.description}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-5 pt-4 border-t border-slate-50 flex justify-end">
+                                        <button className="text-blue-600 text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                                            자세히 보기 <Filter className="rotate-[-90deg]" size={12} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+
+                        {filteredHospitals.length === 0 && (
+                            <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                                <Search size={48} className="mb-4 text-slate-200" />
+                                <p className="font-bold">검색 결과가 없습니다.</p>
+                                <p className="text-sm mt-1">다른 검색어를 입력해보세요.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Community Page
+        const Community = () => {
+            const [activeTab, setActiveTab] = useState('REVIEW');
+            const [showWriteModal, setShowWriteModal] = useState(false);
+            const [posts, setPosts] = useState(MOCK_POSTS_INITIAL);
+
+            const handleWriteSubmit = (e) => {
+                e.preventDefault();
+                const newPost = {
+                    id: `p${Date.now()}`,
+                    type: activeTab,
+                    title: '방금 작성한 게시글입니다 (데모)',
+                    author: '나야나',
+                    content: '이것은 데모용으로 작성된 게시글입니다.',
+                    date: '방금 전',
+                    views: 0,
+                    comments: 0,
+                    isVerifiedUser: true
+                };
+                setPosts([newPost, ...posts]);
+                setShowWriteModal(false);
+                alert('게시글이 등록되었습니다.');
+            };
+
+            return (
+                <div className="pb-24 relative min-h-screen bg-slate-50">
+                    <div className="sticky top-16 bg-white z-30 pt-6 pb-2 px-5 border-b border-slate-100 shadow-sm">
+                        <h1 className="text-2xl font-black text-slate-900 mb-2">커뮤니티</h1>
+                        <p className="text-sm text-slate-500 mb-6">남자들만의 솔직한 이야기</p>
+                        
+                        <div className="flex bg-slate-100 p-1 rounded-xl">
+                            <button onClick={() => setActiveTab('REVIEW')} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'REVIEW' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>후기</button>
+                            <button onClick={() => setActiveTab('QNA')} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'QNA' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>질문</button>
+                            <button onClick={() => setActiveTab('FREE')} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'FREE' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>자유</button>
+                        </div>
+                    </div>
+
+                    <div className="mx-5 my-4 bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
+                        <AlertCircle className="text-blue-500 min-w-[20px] mt-0.5" size={20} />
+                        <p className="text-xs text-blue-800/80 leading-relaxed font-medium">
+                            <strong>클린 캠페인:</strong> 병원 관계자의 홍보성 게시글이나 허위 비방글은 예고 없이 삭제되며 계정이 영구 정지될 수 있습니다.
+                        </p>
+                    </div>
+
+                    <div className="px-5 space-y-4">
+                        {activeTab === 'REVIEW' ? (
+                            <div className="space-y-5">
+                                {MOCK_REVIEWS.map((review) => (
+                                    <div key={review.id} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_10px_-5px_rgba(0,0,0,0.05)]">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-500 font-bold text-xs">
+                                                    {review.userId[0].toUpperCase()}
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-bold text-slate-900 leading-none mb-1">{review.userId}</p>
+                                                    <p className="text-[10px] text-slate-400">{review.date}</p>
+                                                </div>
+                                            </div>
+                                            {review.isVerified && (
+                                                <span className="flex items-center gap-1 text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-1 rounded-full">
+                                                    <CheckCircle2 size={10} /> 영수증인증
+                                                </span>
+                                            )}
+                                        </div>
+                                        
+                                        <div className="mb-4">
+                                            <div className="inline-block px-3 py-1 bg-slate-50 rounded-lg border border-slate-100 mb-2">
+                                                <span className="text-xs font-bold text-blue-600">{review.hospitalName}</span>
+                                                <span className="mx-2 text-slate-300">|</span>
+                                                <span className="text-xs font-medium text-slate-500">{review.treatment}</span>
+                                            </div>
+                                        </div>
+
+                                        <p className="text-slate-700 text-sm leading-relaxed mb-5 whitespace-pre-wrap">
+                                            {review.content}
+                                        </p>
+
+                                        <div className="flex items-center gap-4 text-slate-400 text-xs font-medium border-t border-slate-50 pt-4">
+                                            <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors">
+                                                <ThumbsUp size={16} />
+                                                <span>도움돼요 {review.likeCount}</span>
+                                            </button>
+                                            <button className="flex items-center gap-1.5 hover:text-slate-600 transition-colors">
+                                                <MessageSquare size={16} />
+                                                <span>댓글 0</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm divide-y divide-slate-50 overflow-hidden">
+                                {posts
+                                    .filter(p => p.type === activeTab)
+                                    .map((post) => (
+                                    <div key={post.id} className="p-5 hover:bg-slate-50 cursor-pointer transition-colors group">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-[10px] font-bold text-slate-500">
+                                                {post.type === 'QNA' ? '질문' : '자유'}
+                                            </span>
+                                            <span className="text-xs text-slate-400">·</span>
+                                            <span className="text-xs font-medium text-slate-500">{post.author}</span>
+                                            {post.isVerifiedUser && (
+                                                <span className="text-[10px] text-teal-600 bg-teal-50 px-1.5 rounded font-bold">인증</span>
+                                            )}
+                                        </div>
+                                        <h3 className="font-bold text-slate-900 text-base mb-2 group-hover:text-blue-600 transition-colors">{post.title}</h3>
+                                        <p className="text-slate-500 text-sm line-clamp-1 mb-4">{post.content}</p>
+                                        <div className="flex items-center justify-between text-xs text-slate-400">
+                                            <span>{post.date}</span>
+                                            <div className="flex items-center gap-3">
+                                                <span className="flex items-center gap-1"><Eye size={12}/> {post.views}</span>
+                                                <span className="flex items-center gap-1"><MessageSquare size={12}/> {post.comments}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {posts.filter(p => p.type === activeTab).length === 0 && (
+                                    <div className="py-20 text-center text-slate-400 text-sm flex flex-col items-center">
+                                        <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                                            <PenLine className="text-slate-300" />
+                                        </div>
+                                        첫 번째 게시글을 작성해보세요!
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    <button onClick={() => setShowWriteModal(true)} className="fixed bottom-6 right-6 bg-slate-900 text-white p-4 rounded-full shadow-2xl shadow-slate-900/40 hover:bg-blue-600 hover:scale-105 transition-all z-40 group">
+                        <PenLine size={24} className="group-hover:rotate-12 transition-transform" />
+                    </button>
+
+                    {showWriteModal && (
+                        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 animate-fade-in">
+                            <div className="bg-white w-full max-w-lg rounded-t-3xl md:rounded-3xl overflow-hidden shadow-2xl h-[90vh] md:h-auto flex flex-col animate-slide-up">
+                                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0">
+                                    <h3 className="font-black text-lg text-slate-900">글쓰기</h3>
+                                    <button onClick={() => setShowWriteModal(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                                        <ChevronDown size={24} />
+                                    </button>
+                                </div>
+                                
+                                <form onSubmit={handleWriteSubmit} className="flex-1 overflow-y-auto p-6 flex flex-col">
+                                    <div className="mb-6">
+                                        <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide">카테고리 선택</label>
+                                        <div className="flex gap-2">
+                                            {['REVIEW', 'QNA', 'FREE'].map(type => (
+                                                <label key={type} className={`flex-1 text-center py-3 rounded-xl border font-bold text-sm cursor-pointer transition-all ${
+                                                    activeTab === type ? 'border-blue-500 bg-blue-50 text-blue-600' : 'border-slate-200 text-slate-500 hover:bg-slate-50'
+                                                }`}>
+                                                    <input type="radio" name="type" value={type} checked={activeTab === type} onChange={() => setActiveTab(type)} className="hidden" />
+                                                    {type === 'REVIEW' ? '후기' : type === 'QNA' ? '질문' : '자유'}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4 flex-1">
+                                        <input type="text" placeholder="제목을 입력하세요" className="w-full text-xl font-bold border-b border-slate-200 py-3 focus:border-blue-500 outline-none placeholder:text-slate-300" required />
+                                        <textarea placeholder="내용을 자유롭게 작성해주세요. (병원 후기 작성 시 영수증 인증이 필요할 수 있습니다)" className="w-full h-full min-h-[200px] resize-none outline-none text-slate-600 leading-relaxed text-base placeholder:text-slate-300" required></textarea>
+                                    </div>
+
+                                    <div className="mt-6 pt-4 border-t border-slate-50">
+                                        <button type="submit" className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-blue-600 transition-colors shadow-lg">등록하기</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     )}
-                  </button>
-                </form>
-              )}
-              
-              <p className="mt-6 text-sm text-gray-600">
-                * 스팸은 절대 발송하지 않습니다. 언제든 구독 취소 가능합니다.
-              </p>
-            </div>
-          </section>
-        );
-      };
-
-      // Footer
-      const Footer = () => {
-        return (
-          <footer className="bg-black border-t border-white/10 py-12 px-6">
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-              <div className="flex flex-col items-center md:items-start">
-                <div className="text-2xl font-black tracking-tighter mb-2">
-                  자신<span className="text-brand-accent">있나</span>
                 </div>
-                <p className="text-gray-500 text-sm">
-                  © 2024 JasinItna. All rights reserved.
-                </p>
-              </div>
-              
-              <div className="flex gap-6">
-                  <a href="#" className="text-gray-500 hover:text-white transition-colors">
-                      <Instagram className="w-6 h-6" />
-                  </a>
-                  <a href="#" className="text-gray-500 hover:text-white transition-colors">
-                      <Twitter className="w-6 h-6" />
-                  </a>
-                  <a href="mailto:contact@jasinitna.com" className="text-gray-500 hover:text-white transition-colors">
-                      <Mail className="w-6 h-6" />
-                  </a>
-              </div>
+            );
+        };
 
-              <div className="flex gap-8 text-sm text-gray-500">
-                  <a href="#" className="hover:text-white transition-colors">이용약관</a>
-                  <a href="#" className="hover:text-white transition-colors">개인정보처리방침</a>
-              </div>
-            </div>
-          </footer>
-        );
-      };
+        // Deals Page
+        const Deals = () => {
+            return (
+                <div className="pb-20 min-h-screen bg-slate-50">
+                    <div className="bg-[#0B1120] text-white pt-10 pb-20 px-8 rounded-b-[2.5rem] relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="relative z-10">
+                            <h1 className="text-3xl font-black mb-2 flex items-center gap-2">
+                                오늘의 특가 <Gift className="text-red-400" />
+                            </h1>
+                            <p className="text-slate-400 font-medium">
+                                매일 오전 10시 업데이트!<br/>
+                                검증된 병원들의 시크릿 혜택을 놓치지 마세요.
+                            </p>
+                        </div>
+                    </div>
 
-      const Navbar = () => (
-        <nav className="fixed top-0 w-full z-50 bg-brand-dark/80 backdrop-blur-md border-b border-white/5">
-          <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div className="text-2xl font-black tracking-tighter cursor-pointer">
-              자신<span className="text-brand-accent">있나</span>
-            </div>
-            <div>
-              <button 
-                onClick={() => document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 transition rounded-full text-sm font-medium"
-              >
-                오픈 알림 신청
-              </button>
-            </div>
-          </div>
-        </nav>
-      );
+                    <div className="px-5 -mt-10 space-y-6">
+                        {MOCK_DEALS.map((deal) => (
+                            <div key={deal.id} className="bg-white rounded-3xl p-1 shadow-lg shadow-slate-200/50">
+                                <div className="relative bg-white border-2 border-dashed border-slate-100 rounded-[1.3rem] p-6 overflow-hidden">
+                                    <div className="absolute top-1/2 -left-3 w-6 h-6 bg-slate-50 rounded-full"></div>
+                                    <div className="absolute top-1/2 -right-3 w-6 h-6 bg-slate-50 rounded-full"></div>
 
-      // Main App
-      const App = () => {
-        const [loading, setLoading] = useState(true);
+                                    <div className="flex justify-between items-start mb-5">
+                                        <span className="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">{deal.hospitalName}</span>
+                                        <div className="flex flex-col items-end">
+                                            <span className="flex items-center gap-1 text-xs font-bold text-red-500">
+                                                <Clock size={12} /> {deal.endDate} 마감
+                                            </span>
+                                        </div>
+                                    </div>
 
-        useEffect(() => {
-          const timer = setTimeout(() => {
-            setLoading(false);
-          }, 1500);
-          return () => clearTimeout(timer);
-        }, []);
+                                    <h2 className="text-xl font-bold text-slate-900 mb-4 leading-tight">{deal.title}</h2>
 
-        if (loading) {
-          return (
-            <div className="fixed inset-0 bg-brand-dark flex flex-col items-center justify-center z-50">
-              <h1 className="text-4xl font-black tracking-tighter mb-4 animate-pulse">
-                <span className="text-white">자신</span>
-                <span className="text-brand-accent">있나</span>
-              </h1>
-              <Loader2 className="w-8 h-8 text-brand-accent animate-spin" />
-            </div>
-          );
-        }
+                                    <div className="flex flex-wrap gap-2 mb-6">
+                                        {deal.tags.map(tag => (
+                                            <span key={tag} className="text-[10px] font-bold bg-slate-100 text-slate-500 px-2.5 py-1 rounded-md">#{tag}</span>
+                                        ))}
+                                    </div>
 
-        return (
-          <div className="min-h-screen bg-brand-dark text-white selection:bg-brand-accent selection:text-white overflow-hidden">
-            <div className="fixed inset-0 pointer-events-none z-0">
-              <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-brand-accent/10 rounded-full blur-[120px]" />
-              <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-brand-blue/5 rounded-full blur-[120px]" />
-              <div className="absolute inset-0 bg-grid-pattern opacity-20" />
-            </div>
+                                    <div className="flex items-center justify-between bg-slate-50 rounded-xl p-4 mb-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-xs text-slate-400 line-through">기존가 {deal.originalPrice.toLocaleString()}</span>
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-2xl font-black text-slate-900">{deal.discountPrice.toLocaleString()}</span>
+                                                <span className="text-sm font-bold text-slate-500">원</span>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-3xl font-black text-red-500">{deal.discountRate}%</div>
+                                            <div className="text-[10px] font-bold text-red-400">OFF</div>
+                                        </div>
+                                    </div>
+                                    
+                                    {deal.limitCount && (
+                                        <div className="w-full bg-slate-100 h-1.5 rounded-full mb-4 overflow-hidden">
+                                            <div className="bg-red-500 h-full w-[70%] rounded-full"></div>
+                                        </div>
+                                    )}
+                                    {deal.limitCount && (
+                                        <p className="text-xs text-slate-500 text-center mb-4">
+                                            선착순 <span className="text-red-500 font-bold">{deal.limitCount}명</span> 남았습니다!
+                                        </p>
+                                    )}
 
-            <main className="relative z-10">
-              <Navbar />
-              <HeroSection />
-              <FeaturesSection />
-              <WaitlistSection />
-              <Footer />
-            </main>
-          </div>
-        );
-      };
+                                    <button className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-500 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-200">
+                                        혜택 받기 <ArrowRight size={18} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <div className="py-10 text-center px-6">
+                        <div className="bg-white border border-slate-200 p-6 rounded-2xl">
+                            <h3 className="font-bold text-slate-900 mb-2">원하는 혜택이 없으신가요?</h3>
+                            <p className="text-sm text-slate-500 mb-4">알림을 설정하시면 맞춤 특가 정보를 보내드립니다.</p>
+                            <button className="text-blue-600 text-sm font-bold bg-blue-50 px-6 py-3 rounded-xl hover:bg-blue-100 transition-colors w-full">
+                                특가 알림 받기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
 
-      const rootElement = document.getElementById('root');
-      if (rootElement) {
-        const root = createRoot(rootElement);
+        // Login Page
+        const Login = ({ setView }) => {
+            const handleLogin = (e) => {
+                e.preventDefault();
+                alert('체험판: 로그인 성공 처리되었습니다.');
+                setView(ViewState.HOME);
+            };
+
+            return (
+                <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-100 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+                    
+                    <div className="p-6 relative z-10">
+                        <button onClick={() => setView(ViewState.HOME)} className="text-slate-400 hover:text-slate-900 transition-colors">
+                            <ArrowLeft size={24} />
+                        </button>
+                    </div>
+
+                    <div className="flex-1 flex flex-col justify-center px-8 pb-20 max-w-md mx-auto w-full relative z-10">
+                        <div className="mb-10">
+                            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-2xl mb-6 shadow-xl shadow-slate-200">
+                                <ShieldCheck className="w-8 h-8 text-white" />
+                            </div>
+                            <h1 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">
+                                자신있나<br/>
+                                <span className="text-slate-400 font-medium text-xl">로그인</span>
+                            </h1>
+                            <p className="text-slate-500">
+                                당당한 남자들의 커뮤니티에 오신 것을 환영합니다.
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleLogin} className="space-y-4 mb-8">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 mb-1 ml-1">아이디</label>
+                                <input type="text" placeholder="user@example.com" className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-transparent focus:bg-white focus:border-blue-500 focus:outline-none transition-all font-medium" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-slate-500 mb-1 ml-1">비밀번호</label>
+                                <input type="password" placeholder="••••••••" className="w-full px-5 py-4 rounded-xl bg-slate-50 border border-transparent focus:bg-white focus:border-blue-500 focus:outline-none transition-all font-medium" />
+                            </div>
+                            <button type="submit" className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-[0.98]">로그인하기</button>
+                        </form>
+
+                        <div className="space-y-4">
+                            <div className="relative flex py-2 items-center">
+                                <div className="flex-grow border-t border-slate-100"></div>
+                                <span className="flex-shrink-0 mx-4 text-xs text-slate-300 font-bold">OR</span>
+                                <div className="flex-grow border-t border-slate-100"></div>
+                            </div>
+                            
+                            <button onClick={() => alert('카카오 로그인 시뮬레이션')} className="w-full bg-[#FEE500] text-[#3c1e1e] font-bold py-4 rounded-xl hover:bg-[#fdd835] transition-colors flex items-center justify-center gap-2">
+                                카카오로 3초만에 시작하기
+                            </button>
+                            
+                            <div className="text-center pt-4">
+                                <button onClick={() => setView(ViewState.HOME)} className="text-slate-400 text-sm font-medium hover:text-slate-600 underline decoration-slate-200 underline-offset-4">
+                                    비회원으로 둘러보기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // App Component
+        const App = () => {
+            const [currentView, setView] = useState(ViewState.HOME);
+
+            useEffect(() => {
+                window.scrollTo(0, 0);
+            }, [currentView]);
+
+            const renderView = () => {
+                switch (currentView) {
+                    case ViewState.HOME: return <Home setView={setView} />;
+                    case ViewState.HOSPITALS: return <Hospitals />;
+                    case ViewState.COMMUNITY: return <Community />;
+                    case ViewState.DEALS: return <Deals />;
+                    case ViewState.LOGIN: return <Login setView={setView} />;
+                    default: return <Home setView={setView} />;
+                }
+            };
+
+            return (
+                <Layout currentView={currentView} setView={setView}>
+                    {renderView()}
+                </Layout>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
-      }
     </script>
-  </body>
+</body>
 </html>
