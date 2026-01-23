@@ -11,24 +11,19 @@
     <!-- 2. Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
-    <!-- 3. React & ReactDOM (UMD) -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- 3. React Libraries (Specific Versions for Stability) -->
+    <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- 4. Babel Standalone (JSX 실행용) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- 5. Lucide React Icons (UMD) -->
-    <script src="https://unpkg.com/lucide-react@0.344.0/dist/lucide-react.min.js"></script>
+    <!-- 4. Lucide Icons (Icon Library) -->
+    <script src="https://unpkg.com/lucide-react@0.292.0/dist/lucide-react.min.js"></script>
 
     <style>
       body { font-family: 'Noto Sans KR', sans-serif; }
-      /* Hide scrollbar for Chrome, Safari and Opera */
       .no-scrollbar::-webkit-scrollbar { display: none; }
-      /* Hide scrollbar for IE, Edge and Firefox */
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       
-      /* Animations */
       @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
       .animate-fade-in { animation: fade-in 0.5s ease-out; }
       
@@ -38,6 +33,20 @@
       @keyframes fade-in-down { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
       .animate-fade-in-down { animation: fade-in-down 0.3s ease-out; }
     </style>
+
+    <!-- Error Handler to debug White Screen -->
+    <script>
+      window.onerror = function(message, source, lineno, colno, error) {
+        document.body.innerHTML = `
+          <div style="padding: 20px; background: #fff0f0; color: #c00; font-family: sans-serif;">
+            <h3>오류가 발생했습니다 (실행 불가)</h3>
+            <p><strong>내용:</strong> ${message}</p>
+            <p><strong>위치:</strong> ${source} : ${lineno}</p>
+            <p>새로고침을 하거나 코드를 확인해주세요.</p>
+          </div>
+        `;
+      };
+    </script>
 <script type="importmap">
 {
   "imports": {
@@ -55,15 +64,21 @@
     <div id="root"></div>
 
     <script type="text/babel">
+        // --- SAFE INITIALIZATION ---
         const { useState, useEffect, useMemo } = React;
         
-        // 아이콘 추출
+        // Lucide 아이콘 안전하게 가져오기
+        const Icons = window.lucideReact || {};
         const { 
             Menu, X, ShieldCheck, User, Search, Home, FileText, Tag, 
             CheckCircle2, Star, ChevronRight, Lock, TrendingUp, Users, 
             ArrowRight, Shield, MapPin, Clock, Filter, MessageSquare, 
             ThumbsUp, Eye, PenLine, AlertCircle, ChevronDown, Gift, ArrowLeft
-        } = lucideReact;
+        } = Icons;
+
+        // 아이콘 로드 실패 시 Fallback 컴포넌트
+        const IconFallback = ({ name }) => <span className="text-xs text-red-500 font-bold">[icon:{name}]</span>;
+        const SafeIcon = (IconComponent, props) => IconComponent ? <IconComponent {...props} /> : <IconFallback />;
 
         // --- 1. CONSTANTS & DATA ---
         
@@ -273,9 +288,9 @@
             }, []);
 
             const navItems = [
-                { label: '병원찾기', view: ViewState.HOSPITALS, icon: <Search size={20} /> },
-                { label: '커뮤니티', view: ViewState.COMMUNITY, icon: <FileText size={20} /> },
-                { label: '매일특가', view: ViewState.DEALS, icon: <Tag size={20} /> },
+                { label: '병원찾기', view: ViewState.HOSPITALS, icon: Search },
+                { label: '커뮤니티', view: ViewState.COMMUNITY, icon: FileText },
+                { label: '매일특가', view: ViewState.DEALS, icon: Tag },
             ];
 
             const handleNavClick = (view) => {
@@ -298,7 +313,7 @@
                                 onClick={() => handleNavClick(ViewState.HOME)}
                             >
                                 <div className="bg-blue-600 text-white p-1.5 rounded-lg group-hover:scale-110 transition-transform">
-                                    <ShieldCheck className="w-6 h-6" />
+                                    {SafeIcon(ShieldCheck, { className: "w-6 h-6" })}
                                 </div>
                                 <span className={`text-xl font-black tracking-tighter ${scrolled || currentView !== ViewState.HOME ? 'text-slate-900' : 'text-slate-900 md:text-slate-900'} transition-colors`}>
                                     자신있나
@@ -332,7 +347,7 @@
                                 className="md:hidden p-2 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors"
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             >
-                                {isMobileMenuOpen ? <X /> : <Menu />}
+                                {isMobileMenuOpen ? SafeIcon(X) : SafeIcon(Menu)}
                             </button>
                         </div>
                     </header>
@@ -347,7 +362,7 @@
                                         currentView === ViewState.HOME ? 'bg-blue-50 text-blue-600' : 'text-slate-600 active:bg-slate-50'
                                     }`}
                                 >
-                                    <div className="bg-white p-2 rounded-xl shadow-sm"><Home size={20}/></div>
+                                    <div className="bg-white p-2 rounded-xl shadow-sm">{SafeIcon(Home, {size: 20})}</div>
                                     홈
                                 </button>
                                 {navItems.map((item) => (
@@ -358,7 +373,7 @@
                                             currentView === item.view ? 'bg-blue-50 text-blue-600' : 'text-slate-600 active:bg-slate-50'
                                         }`}
                                     >
-                                        <div className="bg-white p-2 rounded-xl shadow-sm">{item.icon}</div>
+                                        <div className="bg-white p-2 rounded-xl shadow-sm">{SafeIcon(item.icon, {size: 20})}</div>
                                         {item.label}
                                     </button>
                                 ))}
@@ -367,7 +382,7 @@
                                     onClick={() => handleNavClick(ViewState.LOGIN)}
                                     className="flex items-center justify-center gap-2 w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-lg shadow-slate-200"
                                 >
-                                    <User size={20} />
+                                    {SafeIcon(User, {size: 20})}
                                     로그인 / 회원가입
                                 </button>
                             </div>
@@ -383,7 +398,7 @@
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-8">
                                 <div>
                                     <div className="flex items-center gap-2 mb-4 text-white">
-                                        <ShieldCheck className="w-6 h-6 text-blue-500" />
+                                        {SafeIcon(ShieldCheck, {className: "w-6 h-6 text-blue-500"})}
                                         <span className="text-xl font-bold">자신있나</span>
                                     </div>
                                     <p className="text-slate-500 max-w-sm leading-relaxed">
@@ -446,7 +461,7 @@
                             
                             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                                 <button onClick={() => setView(ViewState.HOSPITALS)} className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-2xl shadow-lg shadow-blue-900/50 transition-all transform active:scale-95 flex items-center justify-center gap-2 text-lg">
-                                    내 주변 병원 찾기 <ArrowRight size={20}/>
+                                    내 주변 병원 찾기 {SafeIcon(ArrowRight, {size: 20})}
                                 </button>
                                 <button onClick={() => setView(ViewState.COMMUNITY)} className="bg-slate-800/80 hover:bg-slate-700 text-white font-semibold py-4 px-8 rounded-2xl border border-slate-700/50 backdrop-blur-md transition-all active:scale-95 text-center">
                                     리얼 후기 둘러보기
@@ -479,11 +494,11 @@
                             <div>
                                 <span className="text-blue-600 font-bold text-sm tracking-wider uppercase mb-1 block">Daily Special</span>
                                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                                    오늘의 특가 <TrendingUp className="text-red-500 fill-red-500" size={24} />
+                                    오늘의 특가 {SafeIcon(TrendingUp, {className: "text-red-500 fill-red-500", size: 24})}
                                 </h2>
                             </div>
                             <button onClick={() => setView(ViewState.DEALS)} className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition-colors">
-                                <ChevronRight size={20} />
+                                {SafeIcon(ChevronRight, {size: 20})}
                             </button>
                         </div>
                         
@@ -522,7 +537,7 @@
                             <div>
                                 <span className="text-teal-600 font-bold text-sm tracking-wider uppercase mb-1 block">Real Reviews</span>
                                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                                    실시간 인증 후기 <Shield className="text-teal-500 fill-teal-500" size={24} />
+                                    실시간 인증 후기 {SafeIcon(Shield, {className: "text-teal-500 fill-teal-500", size: 24})}
                                 </h2>
                             </div>
                             <button onClick={() => setView(ViewState.COMMUNITY)} className="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">전체보기</button>
@@ -534,7 +549,7 @@
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="flex items-center gap-2">
                                             <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                                                <Users size={14} className="text-slate-500" />
+                                                {SafeIcon(Users, {size: 14, className: "text-slate-500"})}
                                             </div>
                                             <div>
                                                 <p className="text-sm font-bold text-slate-900">{review.userId}</p>
@@ -543,14 +558,16 @@
                                         </div>
                                         {review.isVerified && (
                                             <span className="flex items-center gap-1 text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-1 rounded-full border border-teal-100">
-                                                <CheckCircle2 size={10} /> 영수증인증
+                                                {SafeIcon(CheckCircle2, {size: 10})} 영수증인증
                                             </span>
                                         )}
                                     </div>
                                     <div className="flex items-center gap-1 mb-3">
                                         <div className="flex text-yellow-400">
                                             {[...Array(5)].map((_, i) => (
-                                                <Star key={i} size={14} fill={i < review.rating ? "currentColor" : "none"} className={i < review.rating ? "" : "text-slate-200"} />
+                                                <span key={i}>
+                                                  {SafeIcon(Star, {size: 14, fill: i < review.rating ? "currentColor" : "none", className: i < review.rating ? "" : "text-slate-200"})}
+                                                </span>
                                             ))}
                                         </div>
                                         <span className="text-xs font-medium text-slate-400 ml-2">{review.treatment}</span>
@@ -558,7 +575,7 @@
                                     <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed mb-4">"{review.content}"</p>
                                     <div className="pt-3 border-t border-slate-50 flex justify-between items-center text-xs text-slate-400">
                                         <span>{review.date}</span>
-                                        <span className="flex items-center gap-1"><Users size={12}/> {review.likeCount}명에게 도움됨</span>
+                                        <span className="flex items-center gap-1">{SafeIcon(Users, {size: 12})} {review.likeCount}명에게 도움됨</span>
                                     </div>
                                 </div>
                             ))}
@@ -629,7 +646,7 @@
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full bg-slate-50 text-slate-800 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white border border-transparent focus:border-blue-500 transition-all shadow-inner"
                             />
-                            <Search className="absolute left-4 top-4 text-slate-400" size={20} />
+                            {SafeIcon(Search, {className: "absolute left-4 top-4 text-slate-400", size: 20})}
                         </div>
 
                         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-3">
@@ -677,13 +694,13 @@
                                     <div className="absolute bottom-4 left-4 text-white">
                                         <h3 className="text-xl font-bold mb-1 shadow-black/10 drop-shadow-md">{hospital.name}</h3>
                                         <div className="flex items-center gap-1 text-sm font-medium text-slate-200">
-                                            <MapPin size={14} />
+                                            {SafeIcon(MapPin, {size: 14})}
                                             <span>{hospital.location}</span>
                                         </div>
                                     </div>
 
                                     <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-lg">
-                                        <Star size={14} className="text-yellow-400 fill-yellow-400" />
+                                        {SafeIcon(Star, {size: 14, className: "text-yellow-400 fill-yellow-400"})}
                                         <span className="font-black text-slate-900 text-sm">{hospital.rating}</span>
                                         <span className="text-slate-400 text-xs font-medium">({hospital.reviewCount})</span>
                                     </div>
@@ -699,7 +716,7 @@
                                     </div>
 
                                     <div className="flex items-start gap-3">
-                                        <div className="mt-1 min-w-[16px]"><Clock size={16} className="text-slate-400" /></div>
+                                        <div className="mt-1 min-w-[16px]">{SafeIcon(Clock, {size: 16, className: "text-slate-400"})}</div>
                                         <div>
                                             <p className="text-sm font-medium text-slate-800 mb-2">{hospital.openTime}</p>
                                             <p className="text-sm text-slate-500 leading-relaxed">
@@ -710,7 +727,7 @@
                                     
                                     <div className="mt-5 pt-4 border-t border-slate-50 flex justify-end">
                                         <button className="text-blue-600 text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all">
-                                            자세히 보기 <Filter className="rotate-[-90deg]" size={12} />
+                                            자세히 보기 {SafeIcon(Filter, {className: "rotate-[-90deg]", size: 12})}
                                         </button>
                                     </div>
                                 </div>
@@ -719,7 +736,7 @@
 
                         {filteredHospitals.length === 0 && (
                             <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-                                <Search size={48} className="mb-4 text-slate-200" />
+                                {SafeIcon(Search, {size: 48, className: "mb-4 text-slate-200"})}
                                 <p className="font-bold">검색 결과가 없습니다.</p>
                                 <p className="text-sm mt-1">다른 검색어를 입력해보세요.</p>
                             </div>
@@ -767,7 +784,7 @@
                     </div>
 
                     <div className="mx-5 my-4 bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
-                        <AlertCircle className="text-blue-500 min-w-[20px] mt-0.5" size={20} />
+                        {SafeIcon(AlertCircle, {className: "text-blue-500 min-w-[20px] mt-0.5", size: 20})}
                         <p className="text-xs text-blue-800/80 leading-relaxed font-medium">
                             <strong>클린 캠페인:</strong> 병원 관계자의 홍보성 게시글이나 허위 비방글은 예고 없이 삭제되며 계정이 영구 정지될 수 있습니다.
                         </p>
@@ -790,7 +807,7 @@
                                             </div>
                                             {review.isVerified && (
                                                 <span className="flex items-center gap-1 text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-1 rounded-full">
-                                                    <CheckCircle2 size={10} /> 영수증인증
+                                                    {SafeIcon(CheckCircle2, {size: 10})} 영수증인증
                                                 </span>
                                             )}
                                         </div>
@@ -809,11 +826,11 @@
 
                                         <div className="flex items-center gap-4 text-slate-400 text-xs font-medium border-t border-slate-50 pt-4">
                                             <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors">
-                                                <ThumbsUp size={16} />
+                                                {SafeIcon(ThumbsUp, {size: 16})}
                                                 <span>도움돼요 {review.likeCount}</span>
                                             </button>
                                             <button className="flex items-center gap-1.5 hover:text-slate-600 transition-colors">
-                                                <MessageSquare size={16} />
+                                                {SafeIcon(MessageSquare, {size: 16})}
                                                 <span>댓글 0</span>
                                             </button>
                                         </div>
@@ -841,8 +858,8 @@
                                         <div className="flex items-center justify-between text-xs text-slate-400">
                                             <span>{post.date}</span>
                                             <div className="flex items-center gap-3">
-                                                <span className="flex items-center gap-1"><Eye size={12}/> {post.views}</span>
-                                                <span className="flex items-center gap-1"><MessageSquare size={12}/> {post.comments}</span>
+                                                <span className="flex items-center gap-1">{SafeIcon(Eye, {size: 12})} {post.views}</span>
+                                                <span className="flex items-center gap-1">{SafeIcon(MessageSquare, {size: 12})} {post.comments}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -850,7 +867,7 @@
                                 {posts.filter(p => p.type === activeTab).length === 0 && (
                                     <div className="py-20 text-center text-slate-400 text-sm flex flex-col items-center">
                                         <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
-                                            <PenLine className="text-slate-300" />
+                                            {SafeIcon(PenLine, {className: "text-slate-300"})}
                                         </div>
                                         첫 번째 게시글을 작성해보세요!
                                     </div>
@@ -860,7 +877,7 @@
                     </div>
 
                     <button onClick={() => setShowWriteModal(true)} className="fixed bottom-6 right-6 bg-slate-900 text-white p-4 rounded-full shadow-2xl shadow-slate-900/40 hover:bg-blue-600 hover:scale-105 transition-all z-40 group">
-                        <PenLine size={24} className="group-hover:rotate-12 transition-transform" />
+                        {SafeIcon(PenLine, {size: 24, className: "group-hover:rotate-12 transition-transform"})}
                     </button>
 
                     {showWriteModal && (
@@ -869,7 +886,7 @@
                                 <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0">
                                     <h3 className="font-black text-lg text-slate-900">글쓰기</h3>
                                     <button onClick={() => setShowWriteModal(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                                        <ChevronDown size={24} />
+                                        {SafeIcon(ChevronDown, {size: 24})}
                                     </button>
                                 </div>
                                 
@@ -912,7 +929,7 @@
                         <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                         <div className="relative z-10">
                             <h1 className="text-3xl font-black mb-2 flex items-center gap-2">
-                                오늘의 특가 <Gift className="text-red-400" />
+                                오늘의 특가 {SafeIcon(Gift, {className: "text-red-400"})}
                             </h1>
                             <p className="text-slate-400 font-medium">
                                 매일 오전 10시 업데이트!<br/>
@@ -932,7 +949,7 @@
                                         <span className="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">{deal.hospitalName}</span>
                                         <div className="flex flex-col items-end">
                                             <span className="flex items-center gap-1 text-xs font-bold text-red-500">
-                                                <Clock size={12} /> {deal.endDate} 마감
+                                                {SafeIcon(Clock, {size: 12})} {deal.endDate} 마감
                                             </span>
                                         </div>
                                     </div>
@@ -971,7 +988,7 @@
                                     )}
 
                                     <button className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-500 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-200">
-                                        혜택 받기 <ArrowRight size={18} />
+                                        혜택 받기 {SafeIcon(ArrowRight, {size: 18})}
                                     </button>
                                 </div>
                             </div>
@@ -1005,14 +1022,14 @@
                     
                     <div className="p-6 relative z-10">
                         <button onClick={() => setView(ViewState.HOME)} className="text-slate-400 hover:text-slate-900 transition-colors">
-                            <ArrowLeft size={24} />
+                            {SafeIcon(ArrowLeft, {size: 24})}
                         </button>
                     </div>
 
                     <div className="flex-1 flex flex-col justify-center px-8 pb-20 max-w-md mx-auto w-full relative z-10">
                         <div className="mb-10">
                             <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-900 rounded-2xl mb-6 shadow-xl shadow-slate-200">
-                                <ShieldCheck className="w-8 h-8 text-white" />
+                                {SafeIcon(ShieldCheck, {className: "w-8 h-8 text-white"})}
                             </div>
                             <h1 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">
                                 자신있나<br/>
