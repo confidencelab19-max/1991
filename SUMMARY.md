@@ -2,7 +2,7 @@
 
 ## 시작하기 <a href="#start" id="start"></a>
 
-* [환영합니다](README.md)
+* [자신있나 병원파트너센터](README.md)
 * [기능 업데이트](start/updates/README.md)
   * [2026년 2월](start/updates/2026-02.md)
   * [2026년 1월](start/updates/2026-01.md)
@@ -51,7 +51,7 @@
 * [상담 통계](consultation/stats.md)
 * [상담 FAQ](consultation/faq.md)
 
-## 광고 관리 <a href="#ads" id="ads"></a>
+## 광고 관리 <a href="#a-ds" id="a-ds"></a>
 
 * [광고 관리](ads/README.md)
 * [부가광고란](ads/about.md)
@@ -68,12 +68,12 @@
 * [리뷰 신고하기](review/report.md)
 * [리뷰 FAQ](review/faq.md)
 
-## 의사 Q&A <a href="#qna" id="qna"></a>
+## 의사 Q\&A <a href="#qna" id="qna"></a>
 
-* [의사 Q&A](qna/README.md)
+* [의사 Q\&A](qna/README.md)
 * [질문 확인하기](qna/check.md)
 * [답변 작성하기](qna/reply.md)
-* [Q&A FAQ](qna/faq.md)
+* [Q\&A FAQ](qna/faq.md)
 
 ## 운영 정책 <a href="#policy" id="policy"></a>
 
